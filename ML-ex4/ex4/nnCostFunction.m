@@ -78,10 +78,13 @@ Theta2_reg = Theta2(:,2:size(Theta2,2));
 
 
 J = -1/m*sum(sum(yvec.*log(hx)+(1-yvec).*log(1-hx)))...
-    + lambda/(2*m)*(sum(sum(Theta1_reg.^2))+sum(sum(Theta2_reg.^2)))
+    + lambda/(2*m)*(sum(sum(Theta1_reg.^2))+sum(sum(Theta2_reg.^2)));
 
-Delta1 = zeros(size(Theta1))
-Delta2 = zeros(size(Theta2))
+delta1 = zeros(size(Theta1));
+delta2 = zeros(size(Theta2));
+
+Theta1_back = Theta1(:,2:end);
+Theta2_back = Theta2(:,2:end);
 
 for i=1:m
     a1 = X(i,:);
@@ -91,14 +94,17 @@ for i=1:m
     a3 = sigmoid(Theta2*a2')';
 
     d3 = a3-yvec(i,:);
-    d2 = Theta2*d3'.*sigmoidGradient(Theta2*a2');
+    d2 = Theta2_back'*d3'.*sigmoidGradient(Theta1*a1');
     
-    Delta1( = 
+    delta1 = delta1 + d2*a1;
+    delta2 = delta2 +d3'*a2;
+end
 
+Theta1_reg = [zeros(size(Theta1,1),1) Theta1_back];
+Theta2_reg = [zeros(size(Theta2,1),1) Theta2_back];
 
-
-
-
+Theta1_grad = 1/m*delta1+lambda/m*Theta1_reg;
+Theta2_grad = 1/m*delta2+lambda/m*Theta2_reg;
 
 
 
